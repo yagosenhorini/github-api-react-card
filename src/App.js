@@ -8,7 +8,11 @@ const Card = (props) => {
       <img width="75" src={props.avatar_url} />
       <div style={{ display: 'inline-block', marginLeft: 10 }}>
         <div style={{ fontSize: '1.25em', fontWeight: 'bold' }}>{props.name}</div>
-        <div>{props.company}</div>
+        <div>Company: {props.company}</div>
+        <div>Email: {props.email}</div>
+        <div>Bio: {props.bio}</div>
+        <div>Blog: <a href={props.blog} target="_blank">Link to Blog</a></div>
+        <div>Profile: <a href={props.html_url} target="_blank">GitHub Profile</a></div>
       </div>
     </div>
   );
@@ -24,15 +28,15 @@ const CardList = (props) => {
 };
 
 class Form extends Component {
+  state = { userName: '' }
   handleSubmit = (event) => {
     event.preventDefault();
-    console.log('Event: Form Submit', this.state.userName);
     axios.get(`https://api.github.com/users/${this.state.userName}`)
     .then(resp =>{
       this.props.onSubmit(resp.data);
+      this.setState({ userName: ''});
     })
   };
-  state = { userName: '' }
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
@@ -47,22 +51,12 @@ class Form extends Component {
 
 class App extends Component {
   state = {
-    cards: [
-      {
-        name: "Yago Senhorini",
-        avatar_url: "https://avatars.githubusercontent.com/u/8445?v=3",
-        company: "Facebook"
-      },
-
-      {
-        name: "Yago Senhorini",
-        avatar_url: "https://avatars.githubusercontent.com/u/8445?v=3",
-        company: "Facebook"
-      }
-    ]
+    cards: []
   };
-  addNewCard =(cardInfo) =>{
-    console.log(cardInfo)
+  addNewCard = (cardInfo) =>{
+    this.setState(prevState =>({
+      cards: prevState.cards.concat(cardInfo)
+    }));
   };
   render() {
     return (
